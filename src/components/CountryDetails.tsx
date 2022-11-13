@@ -1,25 +1,32 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, redirect, Link } from 'react-router-dom';
-import { Countries } from '../interfaces';
+import { RootObject } from '../interfaces';
 
 export default function CountryDetails({
   countries,
 }: {
-  countries: Countries;
+  countries: RootObject[];
 }) {
-  const { alpha3Code: alpha } = useParams();
-  if (alpha === undefined) {
-    redirect('/error');
-    return null;
-  }
+  const { alpha3Code } = useParams();
+  let [country, setCountry] = useState<RootObject | null>(null);
 
-  const country = countries.find(({ alpha3Code }) => alpha3Code === alpha);
+  useEffect(() => {
+    (async () => {
+      let res = await fetch(
+        `https://ih-countries-api.herokuapp.com/countries/${alpha3Code}`
+      );
 
-  if (country === undefined) {
-    redirect('/error');
-    return null;
-  }
+      if (res.status !== 200) {
+        redirect('/error');
+        return null;
+      }
 
+      let data = (await res.json()) as RootObject;
+      setCountry(data);
+    })();
+  }, [alpha3Code]);
+
+  if (!country) return <h1>Loading ...</h1>;
   return (
     <div className="col-7 text-center" key={`${country.alpha3Code}`}>
       <img

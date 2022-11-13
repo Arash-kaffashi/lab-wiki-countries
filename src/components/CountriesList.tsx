@@ -1,8 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Countries } from '../interfaces';
+import { RootObject } from '../interfaces';
 
-export default function CountriesList({ countries }: { countries: Countries }) {
+export default function CountriesList({
+  countries,
+}: {
+  countries: RootObject[];
+}) {
   return (
     <div className="col-5" style={{ maxHeight: '90vh', overflow: 'scroll' }}>
       <div className="list-group">
